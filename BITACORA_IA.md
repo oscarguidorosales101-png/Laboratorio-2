@@ -135,3 +135,31 @@ Se implementó el patrón de limpieza con bandera de montaje (`let mounted = tru
 
 ### 6. Resultado de Pruebas
 Compilación de producción verificada con `npm run build` (0 errores) y navegación interactiva sin parpadeos ni inconsistencias de selección.
+
+---
+
+## ENTRADA 6: Diagnóstico de Gemini API 404, Migración de Modelo y Resolución de Tool Placeholders en n8n
+
+### 1. Prompt Utilizado
+> *"Investiga por qué la integración de Gemini en n8n está fallando con HTTP 500 y 'The resource you are requesting could not be found'. Diagnostica la clave de Gemini existente sin exponer secretos, verifica qué modelos están activos en la API de Google, corrige el modelo en n8n y ajusta los parámetros de la herramienta HTTP Request para que el agente consulte la disponibilidad real de mesas sin devolver errores 400."*
+
+### 2. Objetivo
+Diagnosticar y reparar de raíz el fallo de comunicación entre n8n, el proveedor de IA Google Gemini y la herramienta de backend `/api/disponibilidad`.
+
+### 3. Resultado Obtenido
+Identificación de la causa raíz:
+1. Google AI Studio retiró el soporte para `models/gemini-2.5-flash` a nuevos usuarios, devolviendo `404 Not Found`. La prueba real con la API de Google confirmó que `models/gemini-3-flash-preview` es el modelo activo y funcional que respondió con código HTTP 200.
+2. En n8n, `workflow_history` mantenía en caché la versión antigua sin parámetro explícito de modelo, causando que n8n recurriera al valor por defecto obsoleto.
+3. El nodo `toolHttpRequest` esperaba sintaxis de plantillas con llaves `{fecha}`, `{hora}`, `{personas}`, `{ubicacion}` para mapear los argumentos que el LLM genera hacia los parámetros de consulta URL, en lugar de expresiones anidadas.
+
+### 4. Correcciones Realizadas
+1. Se actualizaron `workflow_entity` y las versiones en `workflow_history` en la base de datos de n8n para apuntar a `models/gemini-3-flash-preview`.
+2. Se reconfiguró la URL del nodo `Herramienta Consulta API` a `http://localhost:3000/api/disponibilidad?fecha={fecha}&hora={hora}&personas={personas}&ubicacion={ubicacion}` y se definieron las descripciones de cada parámetro en `placeholderDefinitions`.
+3. Se exportaron los workflows actualizados a `workflow-n8n.json` y `n8n/workflow-n8n.json`.
+4. Se reinició el servicio n8n para refrescar los componentes en memoria.
+
+### 5. Resultado de Pruebas
+1. Petición completa en lenguaje natural: `"Quiero una mesa para 4 personas el viernes 2026-10-23 a las 20:00 en la terraza"` respondió con HTTP 200, consultó la API real de PostgreSQL y propuso la Mesa 4 (capacidad 4 personas en Terraza) durante 2 horas.
+2. Petición incompleta: `"Quiero una mesa para el fin de semana"` respondió solicitando amablemente aclaraciones de fecha exacta, hora y cantidad de personas, sin inventar disponibilidad.
+3. Petición en día cerrado: `"Quiero una mesa para 2 personas el lunes 2026-10-26 a las 14:00"` respondió informando que el restaurante está cerrado los lunes, respetando fielmente la base de datos.
+

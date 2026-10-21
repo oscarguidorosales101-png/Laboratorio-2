@@ -35,7 +35,13 @@ export default function Navbar() {
     <header className="navbar">
       <div className="navbar-inner">
         <NavLink to="/" className="brand">
-          <div className="brand-icon">🍽️</div>
+          <div className="brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 2h-3a4 4 0 0 0-4 4v14a2 2 0 0 0 2 2h3a2 2 0 0 0 2-2V6a4 4 0 0 0-4-4z"></path>
+              <line x1="6" y1="2" x2="6" y2="22"></line>
+              <line x1="4" y1="6" x2="8" y2="6"></line>
+            </svg>
+          </div>
           <span>GourmetReserve</span>
         </NavLink>
 
@@ -43,37 +49,37 @@ export default function Navbar() {
           <ul className="nav-links">
             <li>
               <NavLink to="/" end className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                📊 Panel
+                Panel
               </NavLink>
             </li>
             <li>
               <NavLink to="/reservas" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                📅 Reservas
+                Reservas
               </NavLink>
             </li>
             <li>
               <NavLink to="/mesas" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                🪑 Mesas
+                Mesas
               </NavLink>
             </li>
             <li>
               <NavLink to="/clientes" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                👥 Clientes
+                Clientes
               </NavLink>
             </li>
             <li>
               <NavLink to="/horarios" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                ⏰ Horarios
+                Horarios
               </NavLink>
             </li>
             <li>
               <NavLink to="/metricas" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                📈 Métricas
+                Métricas
               </NavLink>
             </li>
             <li>
               <NavLink to="/ia" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                🤖 Asistente IA
+                Asistente IA
               </NavLink>
             </li>
           </ul>

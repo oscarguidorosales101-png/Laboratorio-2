@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+const db = require('./db');
 const mesasRoutes = require('./routes/mesas.routes');
 const clientesRoutes = require('./routes/clientes.routes');
 const reservasRoutes = require('./routes/reservas.routes');
@@ -12,19 +13,25 @@ const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
-// Configuración de CORS segura
-const allowedOrigins = process.env.CORS_ORIGIN
+// Configuracion de CORS flexible para cualquier puerto localhost de desarrollo
+const configuredOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim())
-  : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5678'];
+  : [];
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Permitir peticiones sin origin (como herramientas de prueba curl, postman, server-to-server)
-      if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+      // Permitir peticiones sin origin (curl, postman, n8n interno) o cualquier puerto en localhost
+      if (
+        !origin ||
+        /^http:\/\/localhost(:\d+)?$/.test(origin) ||
+        /^http:\/\/127\.0\.0\.1(:\d+)?$/.test(origin) ||
+        configuredOrigins.includes(origin) ||
+        configuredOrigins.includes('*')
+      ) {
         callback(null, true);
       } else {
-        callback(new Error(`Origen ${origin} no permitido por política CORS.`));
+        callback(new Error(`Origen ${origin} no permitido por politica CORS.`));
       }
     },
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -37,7 +44,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Logger seguro para desarrollo (registra método y URL sin volcar datos sensibles)
+// Logger seguro para desarrollo (registra metodo y URL sin volcar datos sensibles)
 app.use((req, res, next) => {
   const start = Date.now();
   res.on('finish', () => {
@@ -49,14 +56,33 @@ app.use((req, res, next) => {
   next();
 });
 
-// Endpoint de verificación de salud (Health Check)
-app.get('/api/health', (req, res) => {
-  res.status(200).json({
-    ok: true,
-    status: 'online',
-    servicio: 'API Reservas Restaurante - Laboratorio #2',
-    timestamp: new Date().toISOString(),
-  });
+// Endpoint de verificacion de salud con comprobacion real de PostgreSQL
+app.get('/api/health', async (req, res) => {
+  try {
+    const { rows } = await db.query('SELECT NOW() AS current_time, current_database() AS db_name');
+    res.status(200).json({
+      ok: true,
+      status: 'online',
+      servicio: 'API Reservas Restaurante - Laboratorio #2',
+      database: {
+        connected: true,
+        name: rows[0].db_name,
+        time: rows[0].current_time,
+      },
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    res.status(503).json({
+      ok: false,
+      status: 'degraded',
+      servicio: 'API Reservas Restaurante - Laboratorio #2',
+      database: {
+        connected: false,
+        error: 'No se pudo conectar a la base de datos PostgreSQL',
+      },
+      timestamp: new Date().toISOString(),
+    });
+  }
 });
 
 // Montaje de rutas modulares

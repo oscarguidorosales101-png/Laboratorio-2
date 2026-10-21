@@ -37,7 +37,7 @@ export default function MetricasPage() {
             onChange={(e) => setFecha(e.target.value)}
           />
           <button className="btn btn-secondary btn-sm" onClick={() => refetch()}>
-            🔄 Recalcular
+            Recalcular
           </button>
         </div>
       </div>
@@ -57,28 +57,24 @@ export default function MetricasPage() {
             <MetricCard
               label="Total Reservas Fecha"
               value={kpis.total_reservas_dia || 0}
-              icon="📊"
               hint="SELECT COUNT(*) WHERE fecha = $1"
               color="#2563EB"
             />
             <MetricCard
               label="Comensales Totales"
               value={kpis.comensales_esperados || 0}
-              icon="🍽️"
               hint="SELECT SUM(personas) WHERE fecha = $1"
               color="#059669"
             />
             <MetricCard
               label="Capacidad Instalada"
               value={`${kpis.capacidad_total_activa || 0} pers.`}
-              icon="🪑"
               hint={`${kpis.mesas_activas || 0} mesas operativas de ${kpis.mesas_totales || 0}`}
               color="#D97706"
             />
             <MetricCard
               label="Clientes en Riesgo"
               value={clientesRiesgo.length}
-              icon="⚠️"
               hint="Comensales con 2 o más ausencias"
               color="#DC2626"
             />
@@ -165,11 +161,11 @@ export default function MetricasPage() {
                         <td>
                           {c.no_shows >= 3 ? (
                             <span className="badge badge-no_show">
-                              ⛔ Bloqueado para nuevas reservas
+                              Bloqueado para nuevas reservas
                             </span>
                           ) : (
                             <span className="badge badge-pendiente">
-                              ⚠️ En riesgo (a 1 ausencia del bloqueo)
+                              En riesgo (a 1 ausencia del bloqueo)
                             </span>
                           )}
                         </td>
@@ -180,7 +176,7 @@ export default function MetricasPage() {
               </div>
             ) : (
               <div style={{ padding: '24px', textAlign: 'center', color: 'var(--status-success-text)' }}>
-                ✅ Ningún comensal presenta 2 o más ausencias acumuladas en este momento.
+                Ningún comensal presenta 2 o más ausencias acumuladas en este momento.
               </div>
             )}
           </div>
@@ -188,7 +184,7 @@ export default function MetricasPage() {
           {/* Glosario y Explicación Técnica de las Consultas SQL */}
           <div className="card" style={{ backgroundColor: 'var(--bg-surface-alt)' }}>
             <h3 style={{ fontSize: '1rem', color: 'var(--color-primary-dark)', marginBottom: '10px' }}>
-              📖 Glosario Técnico de Métricas y Agregaciones SQL
+              Glosario Técnico de Métricas y Agregaciones SQL
             </h3>
             <ul style={{ listStyleType: 'disc', paddingLeft: '20px', fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: '1.7' }}>
               <li>

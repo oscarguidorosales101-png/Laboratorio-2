@@ -53,7 +53,7 @@ export default function DashboardPage() {
             onChange={(e) => setSelectedFecha(e.target.value)}
           />
           <Link to="/reservas/nueva" className="btn btn-primary">
-            ➕ Nueva Reserva
+            Nueva Reserva
           </Link>
         </div>
       </div>
@@ -63,8 +63,8 @@ export default function DashboardPage() {
         <div className={`alert ${resumen.horario_dia.abierto ? 'alert-info' : 'alert-error'}`}>
           <span>
             {resumen.horario_dia.abierto
-              ? `ℹ️ Horario para hoy (${resumen.horario_dia.nombre_dia}): Apertura ${resumen.horario_dia.apertura} — Cierre ${resumen.horario_dia.cierre}. Todas las reservas duran exactamente 2 horas fijas.`
-              : `⚠️ El restaurante permanece CERRADO los días ${resumen.horario_dia.nombre_dia}. No se admiten reservas para esta fecha.`}
+              ? `Horario para hoy (${resumen.horario_dia.nombre_dia}): Apertura ${resumen.horario_dia.apertura} — Cierre ${resumen.horario_dia.cierre}. Todas las reservas duran exactamente 2 horas fijas.`
+              : `Aviso: El restaurante permanece CERRADO los días ${resumen.horario_dia.nombre_dia}. No se admiten reservas para esta fecha.`}
           </span>
         </div>
       )}
@@ -83,28 +83,24 @@ export default function DashboardPage() {
           <MetricCard
             label="Reservas del Día"
             value={kpis.total_reservas_dia}
-            icon="📅"
             hint={`${kpis.reservas_activas} activas (pendientes / confirmadas)`}
             color="#2563EB"
           />
           <MetricCard
             label="Comensales Esperados"
             value={kpis.comensales_esperados}
-            icon="👥"
             hint="Total de personas estimadas en reservas"
             color="#059669"
           />
           <MetricCard
             label="Capacidad Instalada"
             value={`${kpis.capacidad_total_activa} personas`}
-            icon="🪑"
             hint={`${kpis.mesas_activas} mesas operativas de ${kpis.mesas_totales}`}
             color="#D97706"
           />
           <MetricCard
             label="Pendientes de Confirmar"
             value={reservasPorEstado.pendiente || 0}
-            icon="⏳"
             hint="Requieren validación o confirmación"
             color="#DC2626"
           />
@@ -178,7 +174,7 @@ export default function DashboardPage() {
           <h2 className="card-title">Agenda de Reservas para {selectedFecha}</h2>
           <div style={{ display: 'flex', gap: '10px' }}>
             <button className="btn btn-secondary btn-sm" onClick={() => { refetchReservas(); refetchResumen(); }}>
-              🔄 Actualizar
+              Actualizar
             </button>
           </div>
         </div>
@@ -211,7 +207,7 @@ export default function DashboardPage() {
                       <div style={{ fontWeight: 600 }}>{reserva.cliente_nombre}</div>
                       {reserva.cliente_no_shows > 0 && (
                         <span style={{ fontSize: '0.75rem', color: 'var(--status-error-text)', display: 'inline-block' }}>
-                          ⚠️ {reserva.cliente_no_shows} ausencia(s)
+                          Aviso: {reserva.cliente_no_shows} ausencia(s)
                         </span>
                       )}
                     </td>
@@ -236,12 +232,11 @@ export default function DashboardPage() {
           </div>
         ) : (
           <EmptyState
-            icon="📅"
             title="Sin reservas para esta fecha"
             description="No hay reservas programadas para este día. Puede agendar una nueva reserva usando el botón inferior."
             action={
               <Link to="/reservas/nueva" className="btn btn-primary btn-sm">
-                ➕ Registrar Reserva
+                Registrar Reserva
               </Link>
             }
           />

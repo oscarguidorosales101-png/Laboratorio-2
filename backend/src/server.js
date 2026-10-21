@@ -6,20 +6,20 @@ const PORT = parseInt(process.env.PORT || '3000', 10);
 
 const server = app.listen(PORT, async () => {
   console.log(`=======================================================`);
-  console.log(`🚀 Servidor Backend iniciado en: http://localhost:${PORT}`);
-  console.log(`📡 Endpoints disponibles en: http://localhost:${PORT}/api`);
+  console.log(`Servidor Backend iniciado en: http://localhost:${PORT}`);
+  console.log(`Endpoints disponibles en: http://localhost:${PORT}/api`);
   console.log(`=======================================================`);
 
   // Verificar conectividad con PostgreSQL
   try {
     const { rows } = await db.query('SELECT NOW() AS current_time, current_database() AS db_name');
-    console.log(`✅ Conexión exitosa a PostgreSQL:`);
-    console.log(`   - Base de datos: ${rows[0].db_name}`);
-    console.log(`   - Hora del servidor BD: ${rows[0].current_time}`);
+    console.log(`[BD] Conexion exitosa a PostgreSQL:`);
+    console.log(`     Base de datos: ${rows[0].db_name}`);
+    console.log(`     Hora del servidor BD: ${rows[0].current_time}`);
   } catch (err) {
-    console.warn(`⚠️ Advertencia de base de datos:`);
-    console.warn(`   No se pudo conectar a PostgreSQL (${err.message}).`);
-    console.warn(`   Verifique las variables en backend/.env o ejecute npm run init-db.`);
+    console.warn(`[BD] Advertencia de base de datos:`);
+    console.warn(`     No se pudo conectar a PostgreSQL (${err.message}).`);
+    console.warn(`     Verifique las variables en backend/.env o ejecute npm run init-db.`);
   }
 });
 

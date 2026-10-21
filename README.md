@@ -210,7 +210,7 @@ La aplicación web estará disponible en `http://localhost:5174` (o el puerto in
 3. Abre el nodo **Google Gemini Chat Model** y selecciona o crea tu credencial de API (Google AI Studio Gemini API Key).
 4. Verifica que el nodo **Herramienta Consulta API** apunte a `http://localhost:3000/api/disponibilidad`.
 5. Activa el workflow con el interruptor **Active**.
-6. Desde la interfaz web en la vista **🤖 Asistente IA**, envía cualquier consulta como:
+6. Desde la interfaz web en la vista **Asistente IA**, envía cualquier consulta como:
    > *"Quiero una mesa para cuatro personas el viernes a las ocho de la noche en la terraza"*
 
 ---

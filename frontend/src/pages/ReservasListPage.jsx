@@ -56,7 +56,7 @@ export default function ReservasListPage() {
 
         <div>
           <Link to="/reservas/nueva" className="btn btn-primary">
-            ➕ Nueva Reserva
+            Nueva Reserva
           </Link>
         </div>
       </div>
@@ -145,7 +145,7 @@ export default function ReservasListPage() {
             Resultados ({reservasProcesadas.length} reservas encontradas)
           </h2>
           <button className="btn btn-secondary btn-sm" onClick={() => refetch()}>
-            🔄 Refrescar
+            Refrescar
           </button>
         </div>
 
@@ -180,7 +180,7 @@ export default function ReservasListPage() {
                       <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>{r.cliente_telefono}</div>
                       {r.cliente_no_shows > 0 && (
                         <span style={{ fontSize: '0.72rem', color: 'var(--status-error-text)', fontWeight: 600 }}>
-                          ⚠️ {r.cliente_no_shows} ausencia(s)
+                          Aviso: {r.cliente_no_shows} ausencia(s)
                         </span>
                       )}
                     </td>
@@ -216,12 +216,11 @@ export default function ReservasListPage() {
           </div>
         ) : (
           <EmptyState
-            icon="🔍"
             title="No se encontraron reservas"
             description="Ninguna reserva coincide con los criterios de búsqueda o filtros seleccionados."
             action={
               <Link to="/reservas/nueva" className="btn btn-primary btn-sm">
-                ➕ Crear Nueva Reserva
+                Crear Nueva Reserva
               </Link>
             }
           />

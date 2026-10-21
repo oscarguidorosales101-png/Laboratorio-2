@@ -85,7 +85,7 @@ export default function ClientesPage() {
         </div>
 
         <button className="btn btn-primary" onClick={handleOpenCreate}>
-          ➕ Registrar Nuevo Cliente
+          Registrar Nuevo Cliente
         </button>
       </div>
 
@@ -104,7 +104,7 @@ export default function ClientesPage() {
       {/* Regla de negocio visible */}
       <div className="alert alert-info" style={{ marginBottom: '20px' }}>
         <span>
-          🛡️ <strong>Regla de Ausencias:</strong> Los comensales con <strong>3 o más inasistencias</strong> quedan bloqueados automáticamente por el backend para realizar nuevas reservas. El contador de ausencias no puede manipularse manualmente para preservar la integridad de las reglas.
+          <strong>Regla de Ausencias:</strong> Los comensales con <strong>3 o más inasistencias</strong> quedan bloqueados automáticamente por el backend para realizar nuevas reservas. El contador de ausencias no puede manipularse manualmente para preservar la integridad de las reglas.
         </span>
       </div>
 
@@ -170,30 +170,30 @@ export default function ClientesPage() {
                         {isBlocked ? (
                           <span className="badge badge-no_show">
                             <span className="badge-dot"></span>
-                            ⛔ Bloqueado (≥3 ausencias)
+                            Bloqueado (&ge;3 ausencias)
                           </span>
                         ) : isWarning ? (
                           <span className="badge badge-pendiente">
                             <span className="badge-dot"></span>
-                            ⚠️ Alerta (2 ausencias)
+                            Alerta (2 ausencias)
                           </span>
                         ) : (
                           <span className="badge badge-cumplida">
                             <span className="badge-dot"></span>
-                            🟢 Habilitado
+                            Habilitado
                           </span>
                         )}
                       </td>
                       <td>
                         <div style={{ display: 'flex', gap: '6px' }}>
                           <button className="btn btn-secondary btn-sm" onClick={() => handleOpenEdit(c)}>
-                            ✏️ Editar
+                            Editar
                           </button>
                           <button
                             className="btn btn-danger btn-sm"
                             onClick={() => setDeleteModal({ isOpen: true, cliente: c })}
                           >
-                            🗑️ Eliminar
+                            Eliminar
                           </button>
                         </div>
                       </td>
@@ -218,10 +218,11 @@ export default function ClientesPage() {
               <h3>{editingCliente ? `Editar Cliente "${editingCliente.nombre}"` : 'Registrar Nuevo Cliente'}</h3>
               <button
                 type="button"
-                style={{ background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer' }}
+                aria-label="Cerrar modal"
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', alignItems: 'center' }}
                 onClick={() => setModalOpen(false)}
               >
-                ✕
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
               </button>
             </div>
 

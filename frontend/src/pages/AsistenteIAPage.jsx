@@ -165,7 +165,7 @@ export default function AsistenteIAPage() {
       {/* Explicación de Arquitectura de IA */}
       <div className="card" style={{ marginBottom: '24px', backgroundColor: 'var(--color-primary-light)', borderColor: 'var(--color-primary-soft)' }}>
         <h3 style={{ fontSize: '0.95rem', color: 'var(--color-primary-dark)', marginBottom: '6px' }}>
-          🤖 Arquitectura del Agente de Inteligencia Artificial (Caso 2)
+          Arquitectura del Agente de Inteligencia Artificial (Caso 2)
         </h3>
         <p style={{ fontSize: '0.85rem', color: 'var(--text-primary)', lineHeight: '1.6' }}>
           El flujo opera mediante: <strong>Cliente → Webhook n8n → Agente IA (Gemini) → Herramienta HTTP (/api/disponibilidad) → Respuesta JSON estandarizada</strong>.
@@ -216,7 +216,7 @@ export default function AsistenteIAPage() {
                   handleConsultar(s);
                 }}
               >
-                💬 {s}
+                {s}
               </button>
             ))}
           </div>
@@ -227,7 +227,7 @@ export default function AsistenteIAPage() {
 
       {error && (
         <div className="alert alert-error">
-          <span>❌ {error}</span>
+          <span>{error}</span>
         </div>
       )}
 
@@ -266,7 +266,7 @@ export default function AsistenteIAPage() {
           {respuesta?.data?.disponibilidad?.mesas && respuesta.data.disponibilidad.mesas.length > 0 && (
             <div style={{ marginBottom: '20px' }}>
               <h3 style={{ fontSize: '0.95rem', color: 'var(--text-primary)', marginBottom: '10px' }}>
-                🪑 Mesas Reales Encontradas en la Base de Datos:
+                Mesas Reales Encontradas en la Base de Datos:
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
                 {respuesta.data.disponibilidad.mesas.map((m, idx) => (
@@ -308,7 +308,7 @@ export default function AsistenteIAPage() {
               className="btn btn-primary"
               onClick={() => handleLlevarAReserva(respuesta.data?.parametros_extraidos)}
             >
-              📝 Proceder a Reservar con estos Datos →
+              Proceder a Reservar con estos Datos
             </button>
           </div>
         </div>

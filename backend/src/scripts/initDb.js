@@ -24,7 +24,7 @@ async function init() {
 
   try {
     await adminClient.connect();
-    console.log('✅ Conexión administrativa a PostgreSQL exitosa.');
+    console.log('[OK] Conexión administrativa a PostgreSQL exitosa.');
 
     const checkDbRes = await adminClient.query(
       'SELECT 1 FROM pg_database WHERE datname = $1',
@@ -34,14 +34,14 @@ async function init() {
     if (checkDbRes.rows.length === 0) {
       console.log(`Creando base de datos "${targetDbName}"...`);
       await adminClient.query(`CREATE DATABASE "${targetDbName}"`);
-      console.log(`✅ Base de datos "${targetDbName}" creada exitosamente.`);
+      console.log(`[OK] Base de datos "${targetDbName}" creada exitosamente.`);
     } else {
-      console.log(`ℹ️ La base de datos "${targetDbName}" ya existe.`);
+      console.log(`[INFO] La base de datos "${targetDbName}" ya existe.`);
     }
   } catch (err) {
-    console.error('❌ Error en conexión administrativa:', err.message);
+    console.error('[ERROR] Error en conexión administrativa:', err.message);
     if (err.code === '28P01') {
-      console.error('👉 Verifique la contraseña configurada en backend/.env (DB_PASSWORD).');
+      console.error('[AYUDA] Verifique la contraseña configurada en backend/.env (DB_PASSWORD).');
     }
     process.exit(1);
   } finally {
@@ -59,7 +59,7 @@ async function init() {
 
   try {
     await appClient.connect();
-    console.log(`✅ Conectado a "${targetDbName}". Leyendo schema.sql...`);
+    console.log(`[OK] Conectado a "${targetDbName}". Leyendo schema.sql...`);
 
     const schemaPath = path.join(__dirname, '../../../schema.sql');
     if (!fs.existsSync(schemaPath)) {
@@ -68,7 +68,7 @@ async function init() {
 
     const schemaSql = fs.readFileSync(schemaPath, 'utf-8');
     await appClient.query(schemaSql);
-    console.log('✅ Esquema y datos semilla ejecutados correctamente.');
+    console.log('[OK] Esquema y datos semilla ejecutados correctamente.');
 
     // Verificar conteos
     const mesasCount = await appClient.query('SELECT COUNT(*) FROM mesas');
@@ -83,7 +83,7 @@ async function init() {
     console.log(`- Reservas de prueba:   ${reservasCount.rows[0].count}`);
     console.log('------------------------------------\n');
   } catch (err) {
-    console.error('❌ Error al ejecutar schema.sql:', err.message);
+    console.error('[ERROR] Error al ejecutar schema.sql:', err.message);
     process.exit(1);
   } finally {
     await appClient.end();

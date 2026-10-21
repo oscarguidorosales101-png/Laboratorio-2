@@ -161,7 +161,7 @@ export default function ReservaFormPage() {
 
       {formError && (
         <div className="alert alert-error">
-          <span>❌ {formError}</span>
+          <span>{formError}</span>
         </div>
       )}
 
@@ -196,13 +196,13 @@ export default function ReservaFormPage() {
 
             {clienteBloqueado && (
               <div className="form-error" style={{ marginTop: '8px', fontWeight: 600 }}>
-                ⛔ Este cliente ha acumulado {clienteActual.no_shows} inasistencias (no-shows) y tiene bloqueada la creación de reservas según las reglas del negocio.
+                Este cliente ha acumulado {clienteActual.no_shows} inasistencias (no-shows) y tiene bloqueada la creación de reservas según las reglas del negocio.
               </div>
             )}
 
             {clienteActual && !clienteBloqueado && clienteActual.no_shows > 0 && (
               <div className="form-help" style={{ color: 'var(--status-warning-text)', fontWeight: 500 }}>
-                ⚠️ Advertencia: El cliente tiene {clienteActual.no_shows} ausencia(s). Con 3 ausencias será bloqueado.
+                Advertencia: El cliente tiene {clienteActual.no_shows} ausencia(s). Con 3 ausencias será bloqueado.
               </div>
             )}
           </div>
@@ -292,7 +292,7 @@ export default function ReservaFormPage() {
 
           {disponibilidad?.motivo && (
             <div className="alert alert-error">
-              <span>⚠️ {disponibilidad.motivo}</span>
+              <span>{disponibilidad.motivo}</span>
             </div>
           )}
 
@@ -325,7 +325,7 @@ export default function ReservaFormPage() {
                         </span>
                         {isSelected && (
                           <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-primary)' }}>
-                            ✓ SELECCIONADA
+                            SELECCIONADA
                           </span>
                         )}
                       </div>

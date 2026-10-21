@@ -1,0 +1,213 @@
+{
+  "name": "Restaurante - Agente IA Consulta de Disponibilidad",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "restaurante-ia",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "node-webhook-01",
+      "name": "Webhook de Entrada",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        200,
+        300
+      ],
+      "webhookId": "webhook-restaurante-ia"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalizacion y validacion inicial de la solicitud del comensal\nconst body = $input.first().json.body || $input.first().json;\nconst mensaje = body.mensaje || body.prompt || body.text || '';\n\nif (!mensaje || mensaje.trim().length === 0) {\n  return [{\n    json: {\n      valido: false,\n      error: 'El campo \"mensaje\" es obligatorio y no puede estar vacio.',\n      mensaje: ''\n    }\n  }];\n}\n\n// Fecha actual de referencia para interpretar fechas relativas (ej. manana, este viernes)\nconst now = new Date();\nconst hoyISO = now.toISOString().split('T')[0];\n\nreturn [{\n  json: {\n    valido: true,\n    mensaje: mensaje.trim(),\n    fecha_referencia: hoyISO,\n    zona_horaria: 'America/Costa_Rica'\n  }\n}];"
+      },
+      "id": "node-validador-02",
+      "name": "Validar y Normalizar Solicitud",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        420,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.mensaje }}",
+        "options": {
+          "systemMessage": "=Eres el asistente inteligente oficial de reservas del restaurante para el Laboratorio #2.\nTu mision es interpretar la solicitud en lenguaje natural del cliente, identificar los parametros de reserva y consultar la disponibilidad REAL usando la herramienta 'consultar_disponibilidad'.\n\nPARAMETROS A EXTRAER:\n1. fecha: Formato YYYY-MM-DD. Fecha de referencia de hoy: {{ $json.fecha_referencia }}. Si la fecha es ambigua (ej. el fin de semana), solicita amablemente la fecha o dia exacto sin inventarla.\n2. hora: Formato HH:MM (24 horas). Ejemplo: '18:00' para 6:00 PM, '20:00' para 8:00 PM.\n3. personas: Cantidad de comensales (entero positivo).\n4. ubicacion: 'Interior', 'Terraza', 'Ventanal', 'Zona VIP' (opcional si el cliente la menciona).\n\nREGLAS DE OBLIGATORIO CUMPLIMIENTO:\n- SIEMPRE ejecuta la herramienta 'consultar_disponibilidad' con los parametros extraidos antes de responder al cliente.\n- NUNCA inventes mesas, numeros de mesa, horarios, reservas confirmadas ni disponibilidad que la API no haya retornado.\n- Cada reserva dura exactamente 2 horas fijas.\n- Si la API indica que el restaurante esta cerrado ese dia o el horario esta fuera de atencion, explica claramente el motivo devuelto por la API.\n- Si hay mesas disponibles, sugiere preferentemente la mesa mas pequena con capacidad suficiente (ordenada primero por la API).\n- Recuerda que tu SOLO consultas y propones disponibilidad; la confirmacion definitiva se realiza mediante el sistema formal de reservas."
+        }
+      },
+      "id": "node-ai-agent-03",
+      "name": "AI Agent Disponibilidad",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-flash-preview",
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "id": "node-llm-gemini-04",
+      "name": "Google Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        640,
+        520
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "credencial-gemini-placeholder",
+          "name": "Google Gemini API (Configurar en n8n)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "http://localhost:3000/api/disponibilidad?fecha={fecha}&hora={hora}&personas={personas}&ubicacion={ubicacion}",
+        "toolDescription": "Consulta la disponibilidad real de mesas en el restaurante. Requiere fecha (YYYY-MM-DD), hora (HH:MM), personas (numero entero) y ubicacion opcional.",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "fecha",
+              "description": "Fecha de la reserva en formato YYYY-MM-DD (ej: 2026-10-23)",
+              "type": "string"
+            },
+            {
+              "name": "hora",
+              "description": "Hora de inicio de la reserva en formato 24h HH:MM (ej: 20:00 o 14:00)",
+              "type": "string"
+            },
+            {
+              "name": "personas",
+              "description": "Numero de personas o comensales (ej: 4)",
+              "type": "string"
+            },
+            {
+              "name": "ubicacion",
+              "description": "Ubicacion deseada (Terraza, Interior, Ventanal, Zona VIP) o vacio si no especifica",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "node-tool-disponibilidad-05",
+      "name": "Herramienta Consulta API",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        820,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Formatear la salida final hacia el Contrato Superior JSON: { ok, data, error }\nconst item = $input.first().json;\n\n// Si hubo error de validacion inicial previa al agente\nif (item.valido === false) {\n  return [{\n    json: {\n      ok: false,\n      data: null,\n      error: item.error\n    }\n  }];\n}\n\n// Extraer la respuesta generada por el AI Agent\nconst outputText = item.output || item.text || (typeof item === 'string' ? item : JSON.stringify(item));\n\nreturn [{\n  json: {\n    ok: true,\n    data: {\n      mensaje: outputText,\n      agente: 'Restaurante AI Agent Caso 2',\n      timestamp: new Date().toISOString()\n    },\n    error: null\n  }\n}];"
+      },
+      "id": "node-formato-contrato-06",
+      "name": "Estandarizar Contrato JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": "={{ $json.ok ? 200 : 400 }}"
+        }
+      },
+      "id": "node-respond-webhook-07",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1180,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook de Entrada": {
+      "main": [
+        [
+          {
+            "node": "Validar y Normalizar Solicitud",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar y Normalizar Solicitud": {
+      "main": [
+        [
+          {
+            "node": "AI Agent Disponibilidad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent Disponibilidad",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Herramienta Consulta API": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent Disponibilidad",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent Disponibilidad": {
+      "main": [
+        [
+          {
+            "node": "Estandarizar Contrato JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Estandarizar Contrato JSON": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

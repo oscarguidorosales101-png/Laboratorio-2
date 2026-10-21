@@ -1,5 +1,5 @@
 /**
- * Middleware y utilidades de validación de entradas HTTP
+ * Middleware y utilidades de validacion de entradas HTTP
  */
 
 /**
@@ -45,14 +45,16 @@ const addTwoHours = (timeString) => {
   const newMm = totalMinutes % 60;
   
   if (newHh >= 24) {
-    throw new Error('La reserva excede el límite del día actual (no se permite traslape a la medianoche).');
+    const error = new Error('La reserva excede el limite del dia actual (no se permite traslape a la medianoche).');
+    error.statusCode = 409;
+    throw error;
   }
 
   return `${String(newHh).padStart(2, '0')}:${String(newMm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
 };
 
 /**
- * Convierte un string de hora HH:MM:SS a minutos desde las 00:00 para comparación directa
+ * Convierte un string de hora HH:MM:SS a minutos desde las 00:00 para comparacion directa
  */
 const timeToMinutes = (timeString) => {
   const normalized = normalizeTime(timeString);

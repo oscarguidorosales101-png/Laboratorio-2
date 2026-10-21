@@ -100,7 +100,7 @@ export default function ReservaDetailPage() {
         <div style={{ display: 'flex', gap: '10px' }}>
           {!isTerminal && (
             <Link to={`/reservas/${reserva.id}/editar`} className="btn btn-secondary">
-              ✏️ Modificar Reserva
+              Modificar Reserva
             </Link>
           )}
         </div>
@@ -151,7 +151,7 @@ export default function ReservaDetailPage() {
         {/* Información del Cliente Relacionado */}
         <div style={{ padding: '16px', borderRadius: '10px', backgroundColor: 'var(--bg-surface-alt)', border: '1px solid var(--border-color)', marginBottom: '20px' }}>
           <h3 style={{ fontSize: '1rem', marginBottom: '10px', color: 'var(--color-primary-dark)' }}>
-            👤 Información del Comensal
+            Información del Comensal
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
             <div>
@@ -174,7 +174,7 @@ export default function ReservaDetailPage() {
                 </span>
                 {reserva.cliente_no_shows >= 3 && (
                   <span style={{ display: 'block', fontSize: '0.72rem', color: 'var(--status-error-text)' }}>
-                    ⛔ Bloqueado para nuevas reservas
+                    Bloqueado para nuevas reservas
                   </span>
                 )}
               </div>
@@ -185,7 +185,7 @@ export default function ReservaDetailPage() {
         {/* Información de la Mesa Asignada */}
         <div style={{ padding: '16px', borderRadius: '10px', backgroundColor: 'var(--bg-surface-alt)', border: '1px solid var(--border-color)', marginBottom: '20px' }}>
           <h3 style={{ fontSize: '1rem', marginBottom: '10px', color: 'var(--color-primary-dark)' }}>
-            🪑 Mesa Asignada
+            Mesa Asignada
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
             <div>
@@ -204,7 +204,7 @@ export default function ReservaDetailPage() {
             </div>
             <div>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Estado Operativo:</span>
-              <div>{reserva.mesa_activa ? '🟢 Operativa' : '🔴 Inactiva'}</div>
+              <div>{reserva.mesa_activa ? 'Operativa' : 'Inactiva'}</div>
             </div>
           </div>
         </div>
@@ -236,7 +236,7 @@ export default function ReservaDetailPage() {
                 disabled={actionLoading}
                 onClick={() => handleCambiarEstado('confirmada')}
               >
-                ✅ Confirmar Reserva
+                Confirmar Reserva
               </button>
 
               <button
@@ -254,7 +254,7 @@ export default function ReservaDetailPage() {
                   })
                 }
               >
-                ❌ Cancelar Reserva
+                Cancelar Reserva
               </button>
 
               <button
@@ -264,7 +264,7 @@ export default function ReservaDetailPage() {
                 onClick={() =>
                   setModalConfig({
                     isOpen: true,
-                    title: '⚠️ Registrar Inasistencia (No Show)',
+                    title: 'Registrar Inasistencia (No Show)',
                     message: `Registrar esta reserva como No Show incrementará en 1 el contador de ausencias de "${reserva.cliente_nombre}" (actualmente: ${reserva.cliente_no_shows}). Si acumula 3 ausencias, no podrá realizar nuevas reservas.`,
                     confirmText: 'Registrar No Show e Incrementar Ausencias',
                     isDangerous: true,
@@ -272,7 +272,7 @@ export default function ReservaDetailPage() {
                   })
                 }
               >
-                ⚠️ Registrar No Show
+                Registrar No Show
               </button>
             </div>
           </div>
@@ -290,7 +290,7 @@ export default function ReservaDetailPage() {
                 disabled={actionLoading}
                 onClick={() => handleCambiarEstado('cumplida')}
               >
-                🎉 Marcar como Cumplida
+                Marcar como Cumplida
               </button>
 
               <button
@@ -308,7 +308,7 @@ export default function ReservaDetailPage() {
                   })
                 }
               >
-                ❌ Cancelar Reserva
+                Cancelar Reserva
               </button>
 
               <button
@@ -318,7 +318,7 @@ export default function ReservaDetailPage() {
                 onClick={() =>
                   setModalConfig({
                     isOpen: true,
-                    title: '⚠️ Registrar Ausencia (No Show)',
+                    title: 'Registrar Ausencia (No Show)',
                     message: `Registrar esta reserva como No Show incrementará en 1 el contador de ausencias de "${reserva.cliente_nombre}".`,
                     confirmText: 'Registrar No Show',
                     isDangerous: true,
@@ -326,7 +326,7 @@ export default function ReservaDetailPage() {
                   })
                 }
               >
-                ⚠️ Registrar No Show
+                Registrar No Show
               </button>
             </div>
           </div>
@@ -356,7 +356,7 @@ export default function ReservaDetailPage() {
                     })
                   }
                 >
-                  🗑️ Eliminar Registro
+                  Eliminar Registro
                 </button>
               </div>
             )}
