@@ -1,0 +1,103 @@
+import React, { useState, useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
+import api from '../services/api';
+
+export default function Navbar() {
+  const [backendStatus, setBackendStatus] = useState('checking'); // 'online' | 'offline' | 'checking'
+
+  useEffect(() => {
+    let mounted = true;
+    api.getHealth()
+      .then(() => {
+        if (mounted) setBackendStatus('online');
+      })
+      .catch(() => {
+        if (mounted) setBackendStatus('offline');
+      });
+
+    const interval = setInterval(() => {
+      api.getHealth()
+        .then(() => {
+          if (mounted) setBackendStatus('online');
+        })
+        .catch(() => {
+          if (mounted) setBackendStatus('offline');
+        });
+    }, 15000);
+
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
+  }, []);
+
+  return (
+    <header className="navbar">
+      <div className="navbar-inner">
+        <NavLink to="/" className="brand">
+          <div className="brand-icon">🍽️</div>
+          <span>GourmetReserve</span>
+        </NavLink>
+
+        <nav>
+          <ul className="nav-links">
+            <li>
+              <NavLink to="/" end className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                📊 Panel
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/reservas" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                📅 Reservas
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/mesas" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                🪑 Mesas
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/clientes" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                👥 Clientes
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/horarios" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                ⏰ Horarios
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/metricas" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                📈 Métricas
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/ia" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                🤖 Asistente IA
+              </NavLink>
+            </li>
+          </ul>
+        </nav>
+
+        <div className="navbar-actions">
+          {backendStatus === 'online' ? (
+            <span className="backend-status-pill" title="Backend Node.js conectado">
+              <span className="status-dot-pulse"></span>
+              API Online
+            </span>
+          ) : backendStatus === 'offline' ? (
+            <span className="backend-status-pill" style={{ backgroundColor: 'var(--status-error-bg)', color: 'var(--status-error-text)', borderColor: 'var(--status-error-border)' }} title="Backend no responde en puerto 3000">
+              <span className="status-dot-pulse" style={{ backgroundColor: 'var(--status-error-dot)' }}></span>
+              API Offline
+            </span>
+          ) : (
+            <span className="backend-status-pill" style={{ opacity: 0.7 }}>
+              <span className="spinner" style={{ width: 10, height: 10, borderWidth: 1 }}></span>
+              Conectando...
+            </span>
+          )}
+        </div>
+      </div>
+    </header>
+  );
+}
