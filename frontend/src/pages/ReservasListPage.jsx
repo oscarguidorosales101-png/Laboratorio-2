@@ -27,16 +27,21 @@ export default function ReservasListPage() {
     let list = [...reservas];
 
     list.sort((a, b) => {
+      const fechaA = (a.fecha || '').split('T')[0];
+      const fechaB = (b.fecha || '').split('T')[0];
+      const horaA = (a.hora_inicio || '00:00:00').slice(0, 8);
+      const horaB = (b.hora_inicio || '00:00:00').slice(0, 8);
+
       if (sortBy === 'fecha_desc') {
-        const da = new Date(`${a.fecha}T${a.hora_inicio}`);
-        const db = new Date(`${b.fecha}T${b.hora_inicio}`);
-        return db - da;
+        const da = new Date(`${fechaA}T${horaA}`).getTime();
+        const db = new Date(`${fechaB}T${horaB}`).getTime();
+        return (db || 0) - (da || 0);
       } else if (sortBy === 'fecha_asc') {
-        const da = new Date(`${a.fecha}T${a.hora_inicio}`);
-        const db = new Date(`${b.fecha}T${b.hora_inicio}`);
-        return da - db;
+        const da = new Date(`${fechaA}T${horaA}`).getTime();
+        const db = new Date(`${fechaB}T${horaB}`).getTime();
+        return (da || 0) - (db || 0);
       } else if (sortBy === 'personas_desc') {
-        return b.personas - a.personas;
+        return (b.personas || 0) - (a.personas || 0);
       }
       return 0;
     });
@@ -170,10 +175,10 @@ export default function ReservasListPage() {
                 {reservasProcesadas.map((r) => (
                   <tr key={r.id}>
                     <td style={{ fontWeight: 600, color: 'var(--color-primary-dark)', whiteSpace: 'nowrap' }}>
-                      {r.fecha}
+                      {(r.fecha || '').split('T')[0]}
                     </td>
                     <td style={{ whiteSpace: 'nowrap' }}>
-                      <span style={{ fontWeight: 600 }}>{r.hora_inicio.slice(0, 5)}</span> a {r.hora_fin.slice(0, 5)}
+                      <span style={{ fontWeight: 600 }}>{(r.hora_inicio || '').slice(0, 5)}</span> a {(r.hora_fin || '').slice(0, 5)}
                     </td>
                     <td>
                       <div style={{ fontWeight: 600 }}>{r.cliente_nombre}</div>

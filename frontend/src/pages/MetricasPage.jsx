@@ -21,9 +21,9 @@ export default function MetricasPage() {
     <div>
       <div className="page-header">
         <div>
-          <h1 className="page-title">Panel de Métricas e Indicadores SQL</h1>
+          <h1 className="page-title">Panel de Métricas e Indicadores</h1>
           <p className="page-description">
-            Cálculo de agregaciones en tiempo real (COUNT, SUM, GROUP BY) ejecutadas en PostgreSQL.
+            Estadísticas consolidadas en tiempo real sobre reservas, comensales y ocupación del restaurante.
           </p>
         </div>
 
@@ -49,7 +49,7 @@ export default function MetricasPage() {
       )}
 
       {loading ? (
-        <LoadingSpinner message="Ejecutando consultas SQL agregadas en PostgreSQL..." />
+        <LoadingSpinner message="Consultando indicadores en tiempo real..." />
       ) : (
         <>
           {/* Fila de KPIs Principales */}
@@ -57,13 +57,13 @@ export default function MetricasPage() {
             <MetricCard
               label="Total Reservas Fecha"
               value={kpis.total_reservas_dia || 0}
-              hint="SELECT COUNT(*) WHERE fecha = $1"
+              hint="Total de reservas programadas"
               color="#2563EB"
             />
             <MetricCard
               label="Comensales Totales"
               value={kpis.comensales_esperados || 0}
-              hint="SELECT SUM(personas) WHERE fecha = $1"
+              hint="Total de comensales confirmados"
               color="#059669"
             />
             <MetricCard
@@ -85,7 +85,7 @@ export default function MetricasPage() {
             <div className="card-header">
               <h2 className="card-title">Ocupación por Franja Horaria ({fecha})</h2>
               <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-                Intervalos semiabiertos [inicio, fin)
+                Duración fija de 2 horas por reserva
               </span>
             </div>
 
@@ -99,7 +99,7 @@ export default function MetricasPage() {
                     <div key={idx}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                         <span style={{ fontWeight: 700, color: 'var(--color-primary-dark)' }}>
-                          ⏰ {f.hora_inicio.slice(0, 5)} - {f.hora_fin.slice(0, 5)}
+                          {f.hora_inicio.slice(0, 5)} - {f.hora_fin.slice(0, 5)}
                         </span>
                         <span style={{ fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
                           <strong>{f.mesas_ocupadas}</strong> mesas ocupadas ({f.comensales_franja} comensales) — <strong>{porcentaje}%</strong> de ocupación
@@ -181,20 +181,20 @@ export default function MetricasPage() {
             )}
           </div>
 
-          {/* Glosario y Explicación Técnica de las Consultas SQL */}
+          {/* Guía de Indicadores Operativos */}
           <div className="card" style={{ backgroundColor: 'var(--bg-surface-alt)' }}>
             <h3 style={{ fontSize: '1rem', color: 'var(--color-primary-dark)', marginBottom: '10px' }}>
-              Glosario Técnico de Métricas y Agregaciones SQL
+              Guía de Indicadores Operativos
             </h3>
             <ul style={{ listStyleType: 'disc', paddingLeft: '20px', fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: '1.7' }}>
               <li>
-                <strong>Ocupación por Franja:</strong> Calculada mediante <code>GROUP BY hora_inicio, hora_fin</code> filtrando exclusivamente reservas activas (<code>estado IN ('pendiente', 'confirmada')</code>). Las reservas canceladas o cumplidas no bloquean capacidad.
+                <strong>Ocupación por Franja:</strong> Refleja la cantidad de mesas y personas con reserva activa en cada intervalo de 2 horas. Las reservas canceladas o cumplidas no bloquean capacidad.
               </li>
               <li>
-                <strong>Comensales Esperados:</strong> Calculados mediante <code>SUM(personas)</code> para evaluar la carga proyectada de servicio y preparación de cocina.
+                <strong>Comensales Esperados:</strong> Cantidad total de comensales proyectados para planificar el servicio y preparación del restaurante.
               </li>
               <li>
-                <strong>Control de Ausencias (No-Shows):</strong> Monitoreado mediante <code>SELECT ... WHERE no_shows &gt;= 2</code> para advertir preventivamente al personal antes de que un comensal alcance el límite de 3 ausencias.
+                <strong>Control de Ausencias (No-Shows):</strong> Monitoreo preventivo de comensales con inasistencias previas para mitigar ausencias no notificadas.
               </li>
             </ul>
           </div>

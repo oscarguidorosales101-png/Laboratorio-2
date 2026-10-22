@@ -71,13 +71,13 @@ export default function DashboardPage() {
 
       {errorResumen && (
         <div className="alert alert-error">
-          <span>Error al consultar métricas del servidor: {errorResumen}</span>
+          <span>Error al consultar métricas: {errorResumen}</span>
         </div>
       )}
 
       {/* Rejilla de Métricas Principales */}
       {loadingResumen ? (
-        <LoadingSpinner message="Calculando indicadores SQL en tiempo real..." />
+        <LoadingSpinner message="Calculando indicadores en tiempo real..." />
       ) : (
         <div className="metrics-grid">
           <MetricCard
@@ -112,7 +112,7 @@ export default function DashboardPage() {
         {/* Distribución por Estado */}
         <div className="card">
           <div className="card-header">
-            <h2 className="card-title">Distribución por Estado (SQL Agregado)</h2>
+            <h2 className="card-title">Distribución por Estado</h2>
             <Link to="/reservas" style={{ fontSize: '0.85rem' }}>Ver todas →</Link>
           </div>
 

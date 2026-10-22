@@ -128,14 +128,14 @@ export default function ReservaDetailPage() {
           <div>
             <label className="form-label" style={{ color: 'var(--text-muted)', fontSize: '0.78rem' }}>FECHA DE LA RESERVA</label>
             <div style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--color-primary-dark)' }}>
-              {reserva.fecha}
+              {(reserva.fecha || '').split('T')[0]}
             </div>
           </div>
 
           <div>
             <label className="form-label" style={{ color: 'var(--text-muted)', fontSize: '0.78rem' }}>HORARIO DE ATENCIÓN (2 HORAS)</label>
             <div style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--color-primary)' }}>
-              {reserva.hora_inicio.slice(0, 5)} a {reserva.hora_fin.slice(0, 5)}
+              {(reserva.hora_inicio || '').slice(0, 5)} a {(reserva.hora_fin || '').slice(0, 5)}
             </div>
             <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Duración fija de 2 horas</span>
           </div>

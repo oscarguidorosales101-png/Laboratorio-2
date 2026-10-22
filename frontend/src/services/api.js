@@ -51,40 +51,51 @@ async function request(endpoint, options = {}) {
   }
 }
 
+/**
+ * Construye una cadena de consulta (query string) filtrando valores vacíos, undefined y null
+ */
+function buildQueryString(params = {}) {
+  const searchParams = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (
+      value !== undefined &&
+      value !== null &&
+      value !== '' &&
+      value !== 'undefined' &&
+      value !== 'null'
+    ) {
+      searchParams.append(key, value);
+    }
+  }
+  const str = searchParams.toString();
+  return str ? `?${str}` : '';
+}
+
 export const api = {
   // Verificación de estado
   getHealth: () => request('/health'),
 
   // MESAS
-  getMesas: (params = {}) => {
-    const query = new URLSearchParams(params).toString();
-    return request(`/mesas${query ? `?${query}` : ''}`);
-  },
+  getMesas: (params = {}) => request(`/mesas${buildQueryString(params)}`),
   getMesaById: (id) => request(`/mesas/${id}`),
   createMesa: (data) => request('/mesas', { method: 'POST', body: JSON.stringify(data) }),
   updateMesa: (id, data) => request(`/mesas/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-  deleteMesa: (id) => request(`/mesas/${id}`, { method: 'DELETE' }),
+  deleteMesa: (id) => request(`/mesas/${id}`),
 
   // CLIENTES
-  getClientes: (params = {}) => {
-    const query = new URLSearchParams(params).toString();
-    return request(`/clientes${query ? `?${query}` : ''}`);
-  },
+  getClientes: (params = {}) => request(`/clientes${buildQueryString(params)}`),
   getClienteById: (id) => request(`/clientes/${id}`),
   createCliente: (data) => request('/clientes', { method: 'POST', body: JSON.stringify(data) }),
   updateCliente: (id, data) => request(`/clientes/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-  deleteCliente: (id) => request(`/clientes/${id}`, { method: 'DELETE' }),
+  deleteCliente: (id) => request(`/clientes/${id}`),
 
   // RESERVAS
-  getReservas: (params = {}) => {
-    const query = new URLSearchParams(params).toString();
-    return request(`/reservas${query ? `?${query}` : ''}`);
-  },
+  getReservas: (params = {}) => request(`/reservas${buildQueryString(params)}`),
   getReservaById: (id) => request(`/reservas/${id}`),
   createReserva: (data) => request('/reservas', { method: 'POST', body: JSON.stringify(data) }),
   updateReserva: (id, data) => request(`/reservas/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   updateEstadoReserva: (id, estado) => request(`/reservas/${id}/estado`, { method: 'PATCH', body: JSON.stringify({ estado }) }),
-  deleteReserva: (id) => request(`/reservas/${id}`, { method: 'DELETE' }),
+  deleteReserva: (id) => request(`/reservas/${id}`),
 
   // HORARIOS
   getHorarios: () => request('/horarios'),
@@ -92,20 +103,11 @@ export const api = {
   updateHorario: (id, data) => request(`/horarios/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
 
   // DISPONIBILIDAD
-  getDisponibilidad: ({ fecha, hora, personas, ubicacion } = {}) => {
-    const params = new URLSearchParams();
-    if (fecha) params.append('fecha', fecha);
-    if (hora) params.append('hora', hora);
-    if (personas) params.append('personas', personas);
-    if (ubicacion) params.append('ubicacion', ubicacion);
-    return request(`/disponibilidad?${params.toString()}`);
-  },
+  getDisponibilidad: ({ fecha, hora, personas, ubicacion } = {}) =>
+    request(`/disponibilidad${buildQueryString({ fecha, hora, personas, ubicacion })}`),
 
   // MÉTRICAS Y RESUMEN
-  getResumen: (fecha) => {
-    const query = fecha ? `?fecha=${fecha}` : '';
-    return request(`/resumen${query}`);
-  },
+  getResumen: (fecha) => request(`/resumen${buildQueryString({ fecha })}`),
 
   // CONSULTA ASISTENTE IA (n8n Webhook o Fallback Directo de Disponibilidad)
   consultarAgenteIA: async (mensaje) => {

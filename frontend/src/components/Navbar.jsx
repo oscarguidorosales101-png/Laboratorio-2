@@ -79,7 +79,7 @@ export default function Navbar() {
             </li>
             <li>
               <NavLink to="/ia" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                Asistente IA
+                Asistente
               </NavLink>
             </li>
           </ul>
@@ -87,14 +87,14 @@ export default function Navbar() {
 
         <div className="navbar-actions">
           {backendStatus === 'online' ? (
-            <span className="backend-status-pill" title="Backend Node.js conectado">
+            <span className="backend-status-pill" title="Servicio en línea">
               <span className="status-dot-pulse"></span>
-              API Online
+              En línea
             </span>
           ) : backendStatus === 'offline' ? (
-            <span className="backend-status-pill" style={{ backgroundColor: 'var(--status-error-bg)', color: 'var(--status-error-text)', borderColor: 'var(--status-error-border)' }} title="Backend no responde en puerto 3000">
+            <span className="backend-status-pill" style={{ backgroundColor: 'var(--status-error-bg)', color: 'var(--status-error-text)', borderColor: 'var(--status-error-border)' }} title="Servicio sin conexión">
               <span className="status-dot-pulse" style={{ backgroundColor: 'var(--status-error-dot)' }}></span>
-              API Offline
+              Sin conexión
             </span>
           ) : (
             <span className="backend-status-pill" style={{ opacity: 0.7 }}>

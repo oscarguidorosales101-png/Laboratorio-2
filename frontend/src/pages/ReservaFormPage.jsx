@@ -36,8 +36,8 @@ export default function ReservaFormPage() {
       api.getReservaById(id)
         .then((r) => {
           setClienteId(String(r.cliente_id));
-          setFecha(r.fecha);
-          setHoraInicio(r.hora_inicio.slice(0, 5));
+          setFecha((r.fecha || '').split('T')[0]);
+          setHoraInicio((r.hora_inicio || '').slice(0, 5));
           setPersonas(r.personas);
           setMesaSeleccionada(String(r.mesa_id));
           setNota(r.nota || '');

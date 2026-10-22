@@ -124,17 +124,17 @@ export default function AsistenteIAPage() {
 
       let mensajeTexto = '';
       if (!resDisp.disponible) {
-        mensajeTexto = `No fue posible encontrar disponibilidad para los parámetros solicitados. ${resDisp.motivo || 'Verifique el horario o la capacidad.'}`;
+        mensajeTexto = `No fue posible encontrar disponibilidad para los datos solicitados. ${resDisp.motivo || 'Por favor verifica el horario de atención o la cantidad de personas.'}`;
       } else {
         const mesaRecomendada = resDisp.mesas[0];
-        mensajeTexto = `¡Excelente! He consultado la disponibilidad real en el backend para el ${fecha} de ${resDisp.hora_inicio.slice(0, 5)} a ${resDisp.hora_fin.slice(0, 5)} (${personas} comensales${ubicacion ? ` en ${ubicacion}` : ''}). Tenemos ${resDisp.total_mesas_disponibles} mesa(s) libre(s). Le recomiendo la Mesa #${mesaRecomendada.numero} (Capacidad para ${mesaRecomendada.capacidad} personas en ${mesaRecomendada.ubicacion}). Recuerde que la reserva dura exactamente 2 horas fijas.`;
+        mensajeTexto = `Tenemos disponibilidad para el ${fecha} de ${resDisp.hora_inicio.slice(0, 5)} a ${resDisp.hora_fin.slice(0, 5)} (${personas} comensales${ubicacion ? ` en ${ubicacion}` : ''}). Hay ${resDisp.total_mesas_disponibles} mesa(s) libre(s). Te recomendamos la Mesa #${mesaRecomendada.numero} (Capacidad para ${mesaRecomendada.capacidad} personas en ${mesaRecomendada.ubicacion}). Recuerda que las reservas cuentan con una duración fija de 2 horas.`;
       }
 
       setRespuesta({
         ok: true,
         data: {
           mensaje: mensajeTexto,
-          agente: 'Asistente IA (Interpretación de Lenguaje Natural + API)',
+          agente: 'Asistente de Reservas',
           parametros_extraidos: { fecha, hora, personas, ubicacion },
           disponibilidad: resDisp,
           timestamp: new Date().toISOString(),
@@ -142,7 +142,7 @@ export default function AsistenteIAPage() {
         error: null,
       });
     } catch (parseErr) {
-      setError(`Error al consultar disponibilidad: ${parseErr.message}`);
+      setError('No fue posible consultar la disponibilidad en este momento. Por favor verifica los datos o intenta nuevamente.');
     }
   };
 
@@ -155,28 +155,17 @@ export default function AsistenteIAPage() {
     <div style={{ maxWidth: '860px', margin: '0 auto' }}>
       <div className="page-header">
         <div>
-          <h1 className="page-title">Agente de IA y Consulta en Lenguaje Natural</h1>
+          <h1 className="page-title">Asistente de Reservas</h1>
           <p className="page-description">
-            Integración con n8n y API REST: interpreta solicitudes complejas y consulta la disponibilidad real sin inventar datos.
+            Describe tu solicitud en lenguaje natural para consultar disponibilidad y opciones de mesas recomendadas.
           </p>
         </div>
-      </div>
-
-      {/* Explicación de Arquitectura de IA */}
-      <div className="card" style={{ marginBottom: '24px', backgroundColor: 'var(--color-primary-light)', borderColor: 'var(--color-primary-soft)' }}>
-        <h3 style={{ fontSize: '0.95rem', color: 'var(--color-primary-dark)', marginBottom: '6px' }}>
-          Arquitectura del Agente de Inteligencia Artificial (Caso 2)
-        </h3>
-        <p style={{ fontSize: '0.85rem', color: 'var(--text-primary)', lineHeight: '1.6' }}>
-          El flujo opera mediante: <strong>Cliente → Webhook n8n → Agente IA (Gemini) → Herramienta HTTP (/api/disponibilidad) → Respuesta JSON estandarizada</strong>.
-          La IA no tiene potestad para inventar disponibilidad ni crear reservas directas; siempre consulta la disponibilidad real de la base de datos PostgreSQL.
-        </p>
       </div>
 
       {/* Tarjeta de Entrada de Solicitud */}
       <div className="card" style={{ marginBottom: '24px' }}>
         <label className="form-label" style={{ fontSize: '0.95rem' }}>
-          Escriba su solicitud de reserva en lenguaje natural:
+          Escribe tu solicitud de reserva:
         </label>
         <div style={{ display: 'flex', gap: '10px', marginBottom: '14px' }}>
           <input
@@ -202,7 +191,7 @@ export default function AsistenteIAPage() {
         {/* Sugerencias de Prueba Rápida */}
         <div>
           <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>
-            Pruebe una de las solicitudes preparadas:
+            Sugerencias de consulta rápida:
           </span>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
             {sugerencias.map((s, idx) => (
@@ -223,7 +212,7 @@ export default function AsistenteIAPage() {
         </div>
       </div>
 
-      {loading && <LoadingSpinner message="El agente de IA está procesando y consultando la API en tiempo real..." />}
+      {loading && <LoadingSpinner message="Consultando opciones y disponibilidad en tiempo real..." />}
 
       {error && (
         <div className="alert alert-error">
@@ -231,19 +220,16 @@ export default function AsistenteIAPage() {
         </div>
       )}
 
-      {/* Respuesta del Agente Formateada según Contrato JSON */}
+      {/* Respuesta de Disponibilidad */}
       {respuesta && (
         <div className="card">
           <div className="card-header">
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <h2 className="card-title">Respuesta del Agente de IA</h2>
+              <h2 className="card-title">Resultado de la Consulta</h2>
               <span className="badge badge-confirmada">
-                {usandoFallback ? 'Motor de Disponibilidad Activo' : 'n8n Webhook Conectado'}
+                Disponibilidad Comprobada
               </span>
             </div>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-              Contrato: {'{ ok, data, error }'}
-            </span>
           </div>
 
           {/* Mensaje en Lenguaje Natural */}
@@ -259,14 +245,14 @@ export default function AsistenteIAPage() {
               color: 'var(--color-primary-dark)',
             }}
           >
-            {respuesta?.data?.mensaje || respuesta?.mensaje || JSON.stringify(respuesta)}
+            {respuesta?.data?.mensaje || respuesta?.mensaje || 'Consulta completada con éxito.'}
           </div>
 
-          {/* Parámetros extraídos y mesas propuestas */}
+          {/* Mesas propuestas */}
           {respuesta?.data?.disponibilidad?.mesas && respuesta.data.disponibilidad.mesas.length > 0 && (
             <div style={{ marginBottom: '20px' }}>
               <h3 style={{ fontSize: '0.95rem', color: 'var(--text-primary)', marginBottom: '10px' }}>
-                Mesas Reales Encontradas en la Base de Datos:
+                Mesas recomendadas para tu solicitud:
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
                 {respuesta.data.disponibilidad.mesas.map((m, idx) => (
@@ -300,15 +286,15 @@ export default function AsistenteIAPage() {
 
           {/* Botón para formalizar reserva en el sistema */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-              La confirmación definitiva se realiza mediante el formulario protegido por el backend.
+            <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+              Selecciona una opción para continuar con tu reserva.
             </span>
             <button
               type="button"
               className="btn btn-primary"
               onClick={() => handleLlevarAReserva(respuesta.data?.parametros_extraidos)}
             >
-              Proceder a Reservar con estos Datos
+              Continuar con la Reserva
             </button>
           </div>
         </div>

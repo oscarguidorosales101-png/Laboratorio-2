@@ -64,7 +64,7 @@ export default function HorariosPage() {
 
       <div className="alert alert-info" style={{ marginBottom: '24px' }}>
         <span>
-          ⏰ <strong>Regla de Horario de Atención:</strong> Ninguna reserva puede comenzar antes de la hora de apertura ni finalizar después de la hora de cierre. Dado que cada reserva dura <strong>2 horas fijas</strong>, la última hora de inicio admitida es exactamente 2 horas antes del cierre del día.
+          <strong>Regla de Horario de Atención:</strong> Ninguna reserva puede comenzar antes de la hora de apertura ni finalizar después de la hora de cierre. Dado que cada reserva dura <strong>2 horas fijas</strong>, la última hora de inicio admitida es exactamente 2 horas antes del cierre del día.
         </span>
       </div>
 
