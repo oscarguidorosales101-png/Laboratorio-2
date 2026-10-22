@@ -1,5 +1,9 @@
-const { Pool } = require('pg');
+const { Pool, types } = require('pg');
 require('dotenv').config();
+
+// OID 1082 = DATE en PostgreSQL. Configurar parser para retornar cadena pura 'YYYY-MM-DD'
+// evitando conversiones erroneas de zona horaria o marcas de tiempo con sufijo T00:00:00.000Z
+types.setTypeParser(1082, (str) => str);
 
 // Configuración del Pool de conexiones a PostgreSQL
 const poolConfig = process.env.DATABASE_URL

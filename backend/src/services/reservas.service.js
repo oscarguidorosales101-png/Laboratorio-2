@@ -79,29 +79,54 @@ const getAllReservas = async ({ fecha, estado, mesa_id, cliente_id, q } = {}) =>
   `;
   const queryParams = [];
 
-  if (fecha) {
-    queryParams.push(fecha);
-    queryText += ` AND r.fecha = $${queryParams.length}`;
+  // 1. Filtro por fecha (ignora valores vacios, 'undefined', 'null' o 'todos')
+  if (fecha && typeof fecha === 'string') {
+    const cleanFecha = fecha.trim();
+    if (cleanFecha !== '' && cleanFecha !== 'undefined' && cleanFecha !== 'null' && cleanFecha !== 'todos') {
+      if (!isValidDate(cleanFecha)) {
+        const error = new Error('Formato de fecha inválido. Utilice el formato YYYY-MM-DD.');
+        error.statusCode = 400;
+        throw error;
+      }
+      queryParams.push(cleanFecha);
+      queryText += ` AND r.fecha = $${queryParams.length}`;
+    }
   }
 
-  if (estado) {
-    queryParams.push(estado);
-    queryText += ` AND r.estado = $${queryParams.length}`;
+  // 2. Filtro por estado (ignora 'todos', vacios, 'undefined' o 'null')
+  if (estado && typeof estado === 'string') {
+    const cleanEstado = estado.trim().toLowerCase();
+    if (cleanEstado !== '' && cleanEstado !== 'todos' && cleanEstado !== 'undefined' && cleanEstado !== 'null') {
+      queryParams.push(cleanEstado);
+      queryText += ` AND r.estado = $${queryParams.length}`;
+    }
   }
 
-  if (mesa_id) {
-    queryParams.push(parseInt(mesa_id, 10));
-    queryText += ` AND r.mesa_id = $${queryParams.length}`;
+  // 3. Filtro por mesa_id
+  if (mesa_id !== undefined && mesa_id !== null && mesa_id !== '' && mesa_id !== 'undefined' && mesa_id !== 'null') {
+    const numMesa = parseInt(mesa_id, 10);
+    if (!isNaN(numMesa) && numMesa > 0) {
+      queryParams.push(numMesa);
+      queryText += ` AND r.mesa_id = $${queryParams.length}`;
+    }
   }
 
-  if (cliente_id) {
-    queryParams.push(parseInt(cliente_id, 10));
-    queryText += ` AND r.cliente_id = $${queryParams.length}`;
+  // 4. Filtro por cliente_id
+  if (cliente_id !== undefined && cliente_id !== null && cliente_id !== '' && cliente_id !== 'undefined' && cliente_id !== 'null') {
+    const numCliente = parseInt(cliente_id, 10);
+    if (!isNaN(numCliente) && numCliente > 0) {
+      queryParams.push(numCliente);
+      queryText += ` AND r.cliente_id = $${queryParams.length}`;
+    }
   }
 
-  if (q && q.trim() !== '') {
-    queryParams.push(`%${q.trim()}%`);
-    queryText += ` AND (c.nombre ILIKE $${queryParams.length} OR c.telefono ILIKE $${queryParams.length} OR r.nota ILIKE $${queryParams.length})`;
+  // 5. Filtro de busqueda por texto
+  if (q && typeof q === 'string') {
+    const cleanQ = q.trim();
+    if (cleanQ !== '' && cleanQ !== 'undefined' && cleanQ !== 'null') {
+      queryParams.push(`%${cleanQ}%`);
+      queryText += ` AND (c.nombre ILIKE $${queryParams.length} OR c.telefono ILIKE $${queryParams.length} OR r.nota ILIKE $${queryParams.length})`;
+    }
   }
 
   queryText += ' ORDER BY r.fecha DESC, r.hora_inicio ASC';

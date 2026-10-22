@@ -4,9 +4,13 @@ const db = require('../db');
  * Servicio para cálculo de métricas y resumen operativo del restaurante
  * Ejecuta agregaciones SQL reales (COUNT, SUM, GROUP BY) sin datos estáticos
  */
+const isValidDateStr = (str) => typeof str === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(str) && !isNaN(Date.parse(str));
+
 const getResumen = async (fechaParam) => {
-  // Si no se especifica fecha, se utiliza la fecha actual del servidor (YYYY-MM-DD)
-  const fecha = fechaParam || new Date().toISOString().split('T')[0];
+  // Si no se especifica fecha valida, se utiliza la fecha actual del servidor (YYYY-MM-DD)
+  const fecha = (fechaParam && fechaParam !== 'undefined' && fechaParam !== 'null' && isValidDateStr(fechaParam))
+    ? fechaParam
+    : new Date().toISOString().split('T')[0];
 
   // 1. Reservas del día agrupadas por estado (SQL GROUP BY)
   const queryEstados = `
